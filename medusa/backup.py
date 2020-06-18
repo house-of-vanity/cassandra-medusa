@@ -385,7 +385,18 @@ def backup_snapshots(storage, manifest, node_backup, node_backup_cache, snapshot
 
         manifest_objects = list()
         if len(needs_backup) > 0:
-            manifest_objects = storage.storage_driver.upload_blobs(needs_backup, dst_path)
+            # If there is a plenty of files to upload it should be
+            # splitted to batches due to 'gsutil cp' which
+            # can't handle too much source files via STDOUT.
+            step = 64
+            if len(needs_backup) >= step:
+                logging.debug("Uploading %s files to %s.", len(needs_backup), dst_path)
+                for batch_num in range(0, int(len(needs_backup)/step)):
+                    logging.debug("Upload file list is too long, shorten: %s - %s", batch_num*step, step*(batch_num+1)-1)
+                    batch = needs_backup[batch_num*step:step*(batch_num+1)-1]
+                    manifest_objects = storage.storage_driver.upload_blobs(batch, dst_path)
+            else:
+                manifest_objects = storage.storage_driver.upload_blobs(needs_backup, dst_path)
 
         # Reintroducing already backed up objects in the manifest in differential
         for obj in already_backed_up:
