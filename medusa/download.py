@@ -50,9 +50,11 @@ def download_data(storageconfig, backup, fqtns_to_restore, destination):
                 # splitted to batches due to 'gsutil cp' which
                 # can't handle too much source files via STDIN.
                 logging.debug("Downloading %s files to %s.", len(srcs), dst)
-                for batch_num in range(0, int(len(srcs)/step)):
-                    logging.debug("Download file list is too long, shorten: %s - %s", batch_num*step, step*(batch_num+1)-1)
-                    batch = srcs[batch_num*step:step*(batch_num+1)-1]
+                for batch_num in range(0, int(len(srcs) / step)):
+                    logging.debug(
+                        "Download file list is too long, shorten: %s - %s",
+                        batch_num * step, step * (batch_num + 1) - 1)
+                    batch = srcs[batch_num * step:step * (batch_num + 1) - 1]
                     storage.storage_driver.download_blobs(batch, dst)
             else:
                 storage.storage_driver.download_blobs(srcs, dst)
