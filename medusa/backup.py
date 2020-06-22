@@ -387,7 +387,7 @@ def backup_snapshots(storage, manifest, node_backup, node_backup_cache, snapshot
         if len(needs_backup) > 0:
             # If there is a plenty of files to upload it should be
             # splitted to batches due to 'gsutil cp' which
-            # can't handle too much source files via STDOUT.
+            # can't handle too much source files via STDIN.
             step = 64
             if len(needs_backup) >= step:
                 logging.debug("Uploading %s files to %s.", len(needs_backup), dst_path)
