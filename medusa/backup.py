@@ -394,10 +394,9 @@ def backup_snapshots(storage, manifest, node_backup, node_backup_cache, snapshot
                 for batch_num in range(0, int(len(needs_backup)/step)):
                     logging.debug("Upload file list is too long, shorten: %s - %s", batch_num*step, step*(batch_num+1)-1)
                     batch = needs_backup[batch_num*step:step*(batch_num+1)-1]
-                    manifest_objects = storage.storage_driver.upload_blobs(batch, dst_path)
+                    manifest_objects += storage.storage_driver.upload_blobs(batch, dst_path)
             else:
                 manifest_objects = storage.storage_driver.upload_blobs(needs_backup, dst_path)
-
         # Reintroducing already backed up objects in the manifest in differential
         for obj in already_backed_up:
             manifest_objects.append(obj)
